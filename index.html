@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>С мышкой по жизни: Статистика в профессиях будущего</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Шапка */
+        header {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #667eea;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        /* Главная страница */
+        #home {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .intro-text {
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Выбор профессий */
+        #professions {
+            display: none;
+            text-align: center;
+        }
+
+        .professions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .profession-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .profession-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .profession-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .profession-card p {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        /* Модуль профессии */
+        .module {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .back-btn {
+            background: #f0f0f0;
+            color: #667eea;
+            padding: 10px 25px;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .module-title {
+            font-size: 2em;
+            color: #667eea;
+        }
+
+        .module-content {
+            margin-bottom: 30px;
+        }
+
+        .module-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .module-section h3 {
+            color: #764ba2;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .module-section p {
+            margin-bottom: 10px;
+        }
+
+        /* Таблицы */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        /* Задания */
+        .task {
+            background: #e8f4ff;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+
+        .task h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .task ol {
+            margin-left: 25px;
+            margin-bottom: 20px;
+        }
+
+        .task li {
+            margin-bottom: 10px;
+        }
+
+        .answer-area {
+            margin-top: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1em;
+            resize: vertical;
+            min-height: 100px;
+            margin-bottom: 15px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Футер */
+        footer {
+            text-align: center;
+            color: white;
+            padding: 30px;
+            margin-top: 40px;
+            font-size: 0.9em;
+        }
+
+        /* Прогресс */
+        .progress {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        /* Анимации */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        /* Мобильная адаптация */
+        @media (max-width: 768px) {
+            header {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .module {
+                padding: 25px;
+            }
+
+            .professions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .btn {
+                display: block;
+                width: 90%;
+                margin: 10px auto;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐭 С мышкой по жизни</h1>
+            <p class="subtitle">Статистика в профессиях будущего</p>
+            <p>Познакомься с профессиями, где данные и числа помогают менять будущее</p>
+        </header>
+
+        <!-- Главная страница -->
+        <section id="home" class="fade-in">
+            <div class="intro-text">
+                <p><strong>Статистика</strong> — это наука о сборе, анализе и интерпретации данных. В современном мире она нужна везде: в бизнесе, медицине, спорте, науке и даже в играх!</p>
+                <p>С помощью статистики можно:</p>
+                <ul style="margin-left: 30px; margin-top: 10px;">
+                    <li>🔍 Находить закономерности в больших данных</li>
+                    <li>📈 Прогнозировать будущее</li>
+                    <li>💡 Принимать правильные решения</li>
+                    <li>🎯 Оценивать эффективность действий</li>
+                </ul>
+                <p style="margin-top: 20px;">Хочешь узнать, как статистика помогает в реальных профессиях? Выбери интересующую тебя профессию и попробуй себя в роли настоящего специалиста!</p>
+            </div>
+            <button class="btn" onclick="showProfessions()">Начать путешествие ➡️</button>
+        </section>
+
+        <!-- Выбор профессий -->
+        <section id="professions">
+            <h2 style="color: white; text-align: center; margin-bottom: 30px; font-size: 2em;">Выбери профессию</h2>
+            
+            <div class="professions-grid">
+                <div class="profession-card" onclick="showModule('data-scientist')">
+                    <h3>🤖 Data Scientist</h3>
+                    <p>Ищет закономерности в больших данных и строит прогнозы</p>
+                </div>
+
+                <div class="profession-card" onclick="showModule('data-analyst')">
+                    <h3>📊 Data Analyst</h3>
+                    <p>Помогает бизнесу принимать решения на основе данных</p>
+                </div>
+
+                <div class="profession-card" onclick="showModule('statistician')">
+                    <h3>📐 Статистик</h3>
+                    <p>Превращает разрозненные данные в точные выводы</p>
+                </div>
+
+                <div class="profession-card" onclick="showModule('actuary')">
+                    <h3>💰 Актуарий</h3>
+                    <p>Оценивает финансовые риски и прогнозирует расходы</p>
+                </div>
+
+                <div class="profession-card" onclick="showModule('biostatistician')">
+                    <h3>💊 Биостатистик</h3>
+                    <p>Доказывает эффективность лекарств через анализ данных</p>
+                </div>
+
+                <div class="profession-card" onclick="showModule('sports-analyst')">
+                    <h3>⚽ Спортивный аналитик</h3>
+                    <p>Анализирует статистику игроков для улучшения тактики</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <button class="btn" onclick="showHome()">← Назад</button>
+            </div>
+        </section>
+
+        <!-- Модуль: Data Scientist -->
+        <section id="data-scientist" class="module">
+            <div class="module-header">
+                <h2 class="module-title">🤖 Data Scientist</h2>
+                <button class="back-btn" onclick="showProfessions()">← Назад к профессиям</button>
+            </div>
+
+            <div class="module-content">
+                <div class="module-section">
+                    <h3>Кто это?</h3>
+                    <p><strong>Data Scientist</strong> — специалист, который ищет закономерности в больших массивах данных и строит модели, способные предсказывать будущее: поведение пользователей, спрос на товары, распространение заболеваний и многое другое.</p>
+                </div>
+
+                <div class="module-section">
+                    <h3>Где работает?</h3>
+                    <p>IT-компании, банки, маркетплейсы, медицина, транспорт, социальные сети, геймдев, научные центры.</p>
+                </div>
+
+                <div class="module-section">
+                    <h3>Почему важна статистика?</h3>
+                    <p>Статистика помогает проверять гипотезы, строить прогнозы, находить зависимости и оценивать точность моделей.</p>
+                </div>
+
+                <div class="task">
+                    <h3>📝 Мини-задание</h3>
+                    <p><strong>Прогноз скачиваний приложения</strong></p>
+                    <p>Проанализируй таблицу скачиваний приложения за 12 месяцев. Найди средний прирост и спрогнозируй количество скачиваний через 6 и 12 месяцев.</p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Месяц</th>
+                                <th>Скачивания</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Январь</td><td>1 200</td></tr>
+                            <tr><td>Февраль</td><td>1 350</td></tr>
+                            <tr><td>Март</td><td>1 500</td></tr>
+                            <tr><td>Апрель</td><td>1 650</td></tr>
+                            <tr><td>Май</td><td>1 800</td></tr>
+                            <tr><td>Июнь</td><td>2 000</td></tr>
+                            <tr><td>Июль</td><td>2 200</td></tr>
+                            <tr><td>Август</td><td>2 450</td></tr>
+                            <tr><td>Сентябрь</td><td>2 700</td></tr>
+                            <tr><td>Октябрь</td><td>3 000</td></tr>
+                            <tr><td>Ноябрь</td><td>3 300</td></tr>
+                            <tr><td>Декабрь</td><td>3 600</td></tr>
+                        </tbody>
+                    </table>
+
+                    <ol>
+                        <li>Построй график изменения числа скачиваний</li>
+                        <li>Найди средний месячный прирост</li>
+                        <li>Спрогнозируй количество скачиваний через 6 и 12 месяцев</li>
+                        <li>Объясни, какие факторы могут повлиять на точность прогноза</li>
+                    </ol>
+
+                    <div class="answer-area">
+                        <label><strong>Ваш ответ:</strong></label>
+                        <textarea id="ds-answer" placeholder="Напишите ваш анализ и прогноз здесь..."></textarea>
+                        <button class="btn" onclick="checkAnswer('ds')">Проверить ответ</button>
+                        <div id="ds-feedback" class="feedback"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Модуль: Data Analyst -->
+        <section id="data-analyst" class="module">
+            <div class="module-header">
+                <h2 class="module-title">📊 Data Analyst</h2>
+                <button class="back-btn" onclick="showProfessions()">← Назад к профессиям</button>
+            </div>
+
+            <div class="module-content">
+                <div class="module-section">
+                    <h3>Кто это?</h3>
+                    <p><strong>Data Analyst</strong> — специалист, который помогает компаниям принимать решения на основе данных: что продавать, кому, когда и по какой цене.</p>
+                </div>
+
+                <div class="module-section">
+                    <h3>Где работает?</h3>
+                    <p>Бизнес, банки, онлайн-магазины, логистические компании, образовательные и медицинские учреждения.</p>
+                </div>
+
+                <div class="module-section">
+                    <h3>Почему важна статистика?</h3>
+                    <p>Позволяет сравнивать показатели, находить тренды, определять причины роста и падения прибыли.</p>
+                </div>
+
+                <div class="task">
+                    <h3>📝 Мини-задание</h3>
+                    <p><strong>Анализ продаж интернет-магазина</strong></p>
+                    <p>Ты анализируешь данные о продажах в небольшом интернет-магазине. Необходимо найти сильные и слабые стороны бизнеса.</p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>День недели</th>
+                                <th>Электроника (₽)</th>
+                                <th>Одежда (₽)</th>
+                                <th>Книги (₽)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Понедельник</td><td>12 000</td><td>8 000</td><td>3 000</td></tr>
+                            <tr><td>Вторник</td><td>14 000</td><td>9 000</td><td>3 500</td></tr>
+                            <tr><td>Среда</td><td>16 000</td><td>10 000</td><td>4 000</td></tr>
+                            <tr><td>Четверг</td><td>15 000</td><td>11 000</td><td>4 500</td></tr>
+                            <tr><td>Пятница</td><td>20 000</td><td>15 000</td><td>6 000</td></tr>
+                            <tr><td>Суббота</td><td>25 000</td><td>18 000</td><td>7 000</td></tr>
+                            <tr><td>Воскресенье</td><td>23 000</td><td>17 000</td><td>6 500</td></tr>
+                        </tbody>
+                    </table>
+
+                    <ol>
+                        <li>Найди общий доход по каждому дню недели</li>
+                        <li>Определи самый прибыльный день</li>
+                        <li>Найди самую прибыльную категорию товаров за неделю</li>
+                        <li>Предложи два решения для увеличения продаж</li>
+                    </ol>
+
+                    <div class="answer-area">
+                        <label><strong>Ваш ответ:</strong></label>
+                        <textarea id="da-answer" placeholder="Напишите ваш анализ здесь..."></textarea>
+                        <button class="btn" onclick="checkAnswer('da')">Проверить ответ</button>
+                        <div id="da-feedback" class="feedback"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Модуль: Статистик -->
+        <section id="statistician" class="module">
+            <div class="module-header">
+                <h2 class="module-title">📐 Статистик</h2>
+                <button class="back-btn" onclick="showProfessions()">← Назад к профессиям</button>
+            </div>
+
+            <div class="module-content">
+                <div class="module-section">
+                    <h3>Кто это?</h3>
+                    <p><strong>Статистик</strong> — специалист, который собирает, обрабатывает и анализирует данные для науки, государства и общества.</p>
+                </div>
+
+                <div class="module-section">
+                    <h3>Где работает?</h3>
+                    <p>Государственные службы, научные институты, медицинские организации, социологические центры.</p>
+                </div>
+
+                <div class="module-section">
+                    <h3>Почему важна статистика?</h3>
+                    <p>Помогает превращать разрозненные данные в точные и надежные выводы.</p>
+                </div>
+
+                <div class="task">
+                    <h3>📝 Мини-задание</h3>
+                    <p><strong>Анализ школьного опроса</strong></p>
+                    <p>В школе из 1 000 учеников провели опрос 100 человек о любимом предмете. Нужно проанализировать данные и оценить качество исследования.</p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Предмет</th>
+                                <th>Количество ответов</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Математика</td><td>28</td></tr>
+                            <tr><td>Русский язык</td><td>15</td></tr>
+                            <tr><td>Информатика</td><td>22</td></tr>
+                            <tr><td>История</td><td>18</td></tr>
+                            <tr><td>Физкультура</td><td>17</td></tr>
+                        </tbody>
+                    </table>
+
+                    <ol>
+                        <li>Найди долю и процент по каждому предмету</li>
+                        <li>Оцени, можно ли считать выборку репрезентативной</li>
+                        <li>Предложи, как можно улучшить проведение опроса</li>
+                    </ol>
+
+                    <div class="answer-area">
+                        <label><strong>Ваш ответ:</strong></label>
+                        <textarea id="stat-answer" placeholder="Напишите ваш анализ здесь..."></textarea>
+                        <button class="btn" onclick="checkAnswer('stat')">Проверить ответ</button>
+                        <div id="stat-feedback" class="feedback"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Модуль: Актуарий -->
+        <section id="actuary" class="module">
+            <div class="module-header">
+                <h2 class="module-title">💰 Актуарий</h2>
+                <button class="back-btn" onclick="showProfessions()">← Назад к профессиям</button>
+            </div>
+
+            <div class="module-content">
+                <div class="module-section">
+                    <h3>Кто это?</h3>
+                    <p><strong>Актуарий</strong> — специалист по оценке финансовых рисков. Он прогнозирует, хватит ли денег на страховые выплаты, пенсии и инвестиционные обязательства.</p>
+                </div>
+
+                <div class="module-section">
+                    <h3>Где работает?</h3>
+                    <p>Страховые компании, пенсионные фонды, банки, инвестиционные организации.</p>
+                </div>
+
+                <div class="module-section">
+                    <h3>Почему важна статистика?</h3>
+                    <p>Используется для оценки вероятности событий, продолжительности жизни, финансовых рисков и будущих затрат.</p>
+                </div>
+
+                <div class="task">
+                    <h3>📝 Мини-задание</h3>
+                    <p><strong>Прогноз пенсионной системы</strong></p>
+                    <p>Ты работаешь в пенсионном фонде. Твоя задача — оценить, хватит ли средств на выплаты пенсий в 2050 году.</p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Показатель</th>
+                                <th>Значение</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Население трудоспособного возраста</td><td>60 000 000</td></tr>
+                            <tr><td>Средняя зарплата в месяц (₽)</td><td>55 000</td></tr>
+                            <tr><td>Процент страховых взносов</td><td>22%</td></tr>
+                            <tr><td>Число пенсионеров</td><td>35 000 000</td></tr>
+                            <tr><td>Средняя пенсия в месяц (₽)</td><td>22 000</td></tr>
+                        </tbody>
+                    </table>
+
+                    <ol>
+                        <li>Рассчитай общий годовой объём страховых взносов</li>
+                        <li>Рассчитай общий годовой объём пенсионных выплат</li>
+                        <li>Сравни доходы и расходы фонда</li>
+                        <li>Сделай вывод о дефиците или профиците бюджета</li>
+                    </ol>
+
+                    <div class="answer-area">
+                        <label><strong>Ваш ответ:</strong></label>
+                        <textarea id="act-answer" placeholder="Напишите ваши расчёты и вывод здесь..."></textarea>
+                        <button class="btn" onclick="checkAnswer('act')">Проверить ответ</button>
+                        <div id="act-feedback" class="feedback"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Модуль: Биостатистик -->
+        <section id="biostatistician" class="module">
+            <div class="module-header">
+                <h2 class="module-title">💊 Биостатистик</h2>
+                <button class="back-btn" onclick="showProfessions()">← Назад к профессиям</button>
+            </div>
+
+            <div class="module-content">
+                <div class="module-section">
+                    <h3>Кто это?</h3>
+                    <p><strong>Биостатистик</strong> анализирует медицинские и биологические данные, чтобы определить эффективность лекарств и методов лечения.</p>
+                </div>
+
+                <div class="module-section">
+                    <h3>Где работает?</h3>
+                    <p>Больницы, фармацевтические компании, научные лаборатории, международные организации здравоохранения.</p>
+                </div>
+
+                <div class="module-section">
+                    <h3>Почему важна статистика?</h3>
+                    <p>Позволяет доказать, работает ли лечение и насколько оно безопасно.</p>
+                </div>
+
+                <div class="task">
+                    <h3>📝 Мини-задание</h3>
+                    <p><strong>Проверка эффективности лекарства</strong></p>
+                    <p>Проводится исследование нового препарата. Пациенты разделены на две группы.</p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Группа</th>
+                                <th>Среднее время выздоровления (дни)</th>
+                                <th>Количество пациентов</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Препарат</td><td>7</td><td>50</td></tr>
+                            <tr><td>Плацебо</td><td>10</td><td>50</td></tr>
+                        </tbody>
+                    </table>
+
+                    <ol>
+                        <li>Сравни среднее время выздоровления двух групп</li>
+                        <li>Определи, на сколько дней препарат ускоряет выздоровление</li>
+                        <li>Сделай вывод об эффективности лечения</li>
+                    </ol>
+
+                    <div class="answer-area">
+                        <label><strong>Ваш ответ:</strong></label>
+                        <textarea id="bio-answer" placeholder="Напишите ваш анализ здесь..."></textarea>
+                        <button class="btn" onclick="checkAnswer('bio')">Проверить ответ</button>
+                        <div id="bio-feedback" class="feedback"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Модуль: Спортивный аналитик -->
+        <section id="sports-analyst" class="module">
+            <div class="module-header">
+                <h2 class="module-title">⚽ Спортивный аналитик</h2>
+                <button class="back-btn" onclick="showProfessions()">← Назад к профессиям</button>
+            </div>
+
+            <div class="module-content">
+                <div class="module-section">
+                    <h3>Кто это?</h3>
+                    <p><strong>Спортивный аналитик данных</strong> — специалист, который анализирует статистику спортсменов и команд, чтобы улучшить тактику и прогнозировать результаты матчей.</p>
+                </div>
+
+                <div class="module-section">
+                    <h3>Где работает?</h3>
+                    <p>Спортивные клубы, федерации, телеканалы, букмекерские компании.</p>
+                </div>
+
+                <div class="module-section">
+                    <h3>Почему важна статистика?</h3>
+                    <p>Помогает сравнивать эффективность игроков и предсказывать исходы соревнований.</p>
+                </div>
+
+                <div class="task">
+                    <h3>📝 Мини-задание</h3>
+                    <p><strong>Анализ футболистов</strong></p>
+                    <p>Тренер просит помочь выбрать самого эффективного игрока для следующего матча.</p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Игрок</th>
+                                <th>Голы</th>
+                                <th>Голевые передачи</th>
+                                <th>Удары</th>
+                                <th>Минуты на поле</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Игрок A</td><td>5</td><td>3</td><td>20</td><td>900</td></tr>
+                            <tr><td>Игрок B</td><td>7</td><td>1</td><td>25</td><td>950</td></tr>
+                            <tr><td>Игрок C</td><td>4</td><td>5</td><td>18</td><td>850</td></tr>
+                            <tr><td>Игрок D</td><td>6</td><td>2</td><td>22</td><td>920</td></tr>
+                        </tbody>
+                    </table>
+
+                    <ol>
+                        <li>Придумай формулу для расчёта эффективности игрока</li>
+                        <li>Рассчитай показатель для каждого игрока</li>
+                        <li>Выбери самого ценного игрока и объясни свой выбор</li>
+                    </ol>
+
+                    <div class="answer-area">
+                        <label><strong>Ваш ответ:</strong></label>
+                        <textarea id="sport-answer" placeholder="Напишите ваш анализ здесь..."></textarea>
+                        <button class="btn" onclick="checkAnswer('sport')">Проверить ответ</button>
+                        <div id="sport-feedback" class="feedback"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>🎓 Проектная работа "С мышкой по жизни: Статистика в профессиях будущего"</p>
+            <p>© 2026 | Школьный проект по профориентации</p>
+        </footer>
+    </div>
+
+    <script>
+        // Показать выбор профессий
+        function showProfessions() {
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('professions').style.display = 'block';
+            document.querySelectorAll('.module').forEach(m => m.style.display = 'none');
+        }
+
+        // Показать главную
+        function showHome() {
+            document.getElementById('home').style.display = 'block';
+            document.getElementById('professions').style.display = 'none';
+            document.querySelectorAll('.module').forEach(m => m.style.display = 'none');
+        }
+
+        // Показать модуль профессии
+        function showModule(moduleId) {
+            document.getElementById('professions').style.display = 'none';
+            document.querySelectorAll('.module').forEach(m => m.style.display = 'none');
+            document.getElementById(moduleId).style.display = 'block';
+            document.getElementById(moduleId).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Проверка ответов
+        function checkAnswer(type) {
+            const feedbackId = type + '-feedback';
+            const feedbackEl = document.getElementById(feedbackId);
+            
+            feedbackEl.style.display = 'block';
+            feedbackEl.className = 'feedback correct';
+            
+            if (type === 'ds') {
+                feedbackEl.innerHTML = '✅ <strong>Отлично!</strong><br><br><strong>Примерный ответ:</strong><br>• Средний прирост: ~200 скачиваний в месяц<br>• Прогноз через 6 месяцев: ~4 800 скачиваний<br>• Прогноз через 12 месяцев: ~6 000 скачиваний<br>• Факторы: маркетинг, сезонность, конкуренты, отзывы';
+            } else if (type === 'da') {
+                feedbackEl.innerHTML = '✅ <strong>Молодец!</strong><br><br><strong>Примерный ответ:</strong><br>• Самый прибыльный день: Суббота (50 000 ₽)<br>• Самая прибыльная категория: Электроника (125 000 ₽)<br>• Решения: расширить ассортимент электроники, увеличить рекламу в будние дни';
+            } else if (type === 'stat') {
+                feedbackEl.innerHTML = '✅ <strong>Верно!</strong><br><br><strong>Примерный ответ:</strong><br>• Математика: 28%, Информатика: 22%, История: 18%, Физра: 17%, Русский: 15%<br>• Выборка репрезентативна (10% от населения)<br>• Улучшения: стратифицированная выборка по классам, анонимность';
+            } else if (type === 'act') {
+                feedbackEl.innerHTML = '✅ <strong>Правильно!</strong><br><br><strong>Расчёты:</strong><br>• Взносы: 60М × 55 000 × 0.22 × 12 = 8.712 трлн ₽<br>• Выплаты: 35М × 22 000 × 12 = 9.24 трлн ₽<br>• Дефицит: 528 млрд ₽ в год';
+            } else if (type === 'bio') {
+                feedbackEl.innerHTML = '✅ <strong>Точно!</strong><br><br><strong>Вывод:</strong><br>• Разница: 3 дня (10 - 7)<br>• Препарат ускоряет выздоровление на 30%<br>• Лечение эффективно, статистически значимо';
+            } else if (type === 'sport') {
+                feedbackEl.innerHTML = '✅ <strong>Здорово!</strong><br><br><strong>Пример формулы:</strong><br>Эффективность = (Голы × 2 + Передачи) / (Минуты / 90)<br>• Игрок А: 1.30, Игрок B: 1.41, Игрок C: 1.13, Игрок D: 1.37<br>• Лучший: Игрок B (самый результативный)';
+            }
+        }
+
+        // Добавить плавную прокрутку
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
